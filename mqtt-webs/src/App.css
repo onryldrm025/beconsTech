@@ -1,0 +1,29 @@
+.conteiner{
+  width: 700px;
+  height: 200px;
+  position: relative;
+  
+}
+/* .bgpic{
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+} */
+
+.point{
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background-color: red;
+  border-radius: 50%;
+
+  
+}
+.point-id{
+  margin-top: 15px;
+  color: blue;
+}
+.bgpic{
+  width: 700px;
+  height: 400px;
+}
