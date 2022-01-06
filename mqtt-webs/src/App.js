@@ -1,6 +1,6 @@
 
 import './App.css';
-import pic from './assets/ss.png'
+import pic from './assets/ssd.jpeg'
 import {useRef,useEffect,useState} from 'react'
 import { socket } from './socket'
 
@@ -10,8 +10,14 @@ function App() {
   const [x,setX] = useState(0)
   var data = []
   var datax = []
-  
+  const fulldata= {}
+  const [point,setPoint] = useState({})
 
+  
+  useEffect(()=>{
+    console.log(point)
+
+  },[point])
    useEffect(() => {
     socket.emit('sayHello','Web Girdids');
     // socket.on('data', (ds)=>{
@@ -53,30 +59,61 @@ function App() {
     //   } 
     // });
 
-    socket.on('data2', (data) => {
-      if(data.macAddress=== '12:3B:6A:1B:44:52'){
-        ref.current.style.top=`75px`
-        ref.current.style.left=` 217px`
-        console.log('Femi')
+    function calcXY(x1,y1,r1,x2,y2,r2,x3,y3,r3){
+      let A = 2*x2 - 2*x1
+      let B = 2*y2 - 2*y1
+      let C = r1**2 - r2**2 - x1**2 + x2**2 - y1**2 + y2**2
+      let D = 2*x3 - 2*x2
+      let E = 2*y3 - 2*y2
+      let F = r2**2 - r3**2 - x2**2 + x3**2 - y2**2 + y3**2
+      let x = (C*E - F*B) / (E*A - B*D)
+      let y = (C*D - A*F) / (B*D - A*E)
+      return {x,y}
+
+    }
+
+    function calcPosition(data){
+      console.log(data)
+      let x1 = data['D43639AEA1AA'].x
+      let y1 = data['D43639AEA1AA'].y
+      let r1 = data['D43639AEA1AA'].r
+
+      let x2 = data['606405B2341B'].x
+      let y2 = data['606405B2341B'].y
+      let r2 = data['606405B2341B'].r
+
+      let x3 = data['8030DCC74F9A'].x
+      let y3 = data['8030DCC74F9A'].y
+      let r3 = data['8030DCC74F9A'].r
+      let res = calcXY(x1,y1,r1,x2,y2,r2,x3,y3,r3)
+      setPoint(()=>res)
+     
+
+    }
+
+    socket.on('data', (data) => {
+      if(data.Mac in fulldata){
+        if(data.id in fulldata[data.Mac] ){
+          fulldata[data.Mac][data.id]= {x:data.x,y:data.y,r:data.r}
+        }else{
+          fulldata[data.Mac][data.id] = {x:data.x,y:data.y,r:data.r}
+        }
+        if(Object.keys(fulldata[data.Mac]).length  >=3  ){
+          calcPosition(fulldata[data.Mac])
+        }
+      }else{
+        fulldata[data.Mac] = {}
+        fulldata[data.Mac][data.id] = {x:data.x,y:data.y, r:data.r}
       }
-      if(data.macAddress=== '12:3B:6A:1B:44:44'){
-        ref.current.style.top=`78px`
-        ref.current.style.left=` 404px`
-        console.log('Onur')
-      }
-      if(data.macAddress=== '12:3B:6A:1B:44:56'){
-        ref.current.style.top=`279px`
-        ref.current.style.left=` 336px`
-        console.log('alp')
-      }
+    
   })
  
   },[])
-   useEffect(() => {
-    ref.current.style.top=`${y}px`
-     ref.current.style.left=` ${x}px`
-    // ref.current.style.left=` $50px`
-   }, [y,x])
+  //  useEffect(() => {
+  //   ref.current.style.top=`${y}px`
+  //    ref.current.style.left=` ${x}px`
+    
+  //  }, [y,x])
 
   return (
     <div className="App">
