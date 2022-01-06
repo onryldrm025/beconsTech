@@ -50,6 +50,7 @@ function sendY(id){
 
 function trackPoint(){
   console.log('asd')
+  console.log('asd')
 
 }
 
