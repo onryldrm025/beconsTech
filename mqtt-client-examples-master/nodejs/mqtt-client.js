@@ -5,7 +5,6 @@ var cors = require('cors')
 const app = express();
 
 var mqtt=require('mqtt');
-const e = require('cors');
 
 var client  = mqtt.connect('mqtt://mqtt.bconimg.com');
 console.log('çalıştı');
@@ -48,23 +47,17 @@ function sendY(id){
   }
 }
 
-function trackPoint(){
-  console.log('asd')
-  console.log('asd')
-
-}
 
 function dataConvert(data,id){
   var s = data.substring(0,data.length-1)
   var datam =  s.split(';')
-  
   datam = datam.map((e)=>{
     let RSSI  =  parseInt(e.substring(56,58),16) - 255;
     let measuredPower = parseInt(e.substring(52,54),16) -255
-    return id ={
+    return {
       'id':id,
-      'x':  sendX(id),
-      'y':  sendY(id),
+      // 'x':  sendX(id),
+      // 'y':  sendY(id),
       'Mac': e.substring(0,12),
       'Beacon UUID':e.substring(14,44),
       'major':e.substring(44,48),
@@ -72,18 +65,19 @@ function dataConvert(data,id){
       'measured power':measuredPower,
       'Battery ':e.substring(54,56),
       'RSSI': RSSI,
-      'r' : Math.pow(10,((measuredPower-RSSI) /(10*(3)))),
+       'distance' : Math.pow(10,((measuredPower-RSSI) /(10*(3)))),
+      // 'r' : Math.pow(10,((measuredPower-RSSI) /(10*(3)))),
     }
   })
-  let a = datam.reduce((arr,cur)=>{
-    arr[cur.id.toString()]= cur
-    return arr
-  },{})
+  // let a = datam.reduce((arr,cur)=>{
+  //   arr[cur.Mac.toString()]= cur
+  //   return arr
+  // },{})
 
-  // console.log(a);
-  datam.forEach(element => {
-    io.emit('data',element)
-  });
+  // console.log(a)
+    io.emit('data',{[id]:datam})
+
+  // io.emit('data',datam)
 }
 
 io.on('connection', (socket) => {
@@ -105,6 +99,4 @@ io.on('connection', (socket) => {
   //   }, {})
   //   io.emit('data3', order)
   // })
-  socket.on('sayHello',(data)=>console.log(data))
-  socket.emit('msg','Girdiniz')
 });

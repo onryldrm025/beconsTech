@@ -30,3 +30,31 @@
   height: 500px;
   
 }
+.area{
+  width: 271px;
+  height: 500px;
+  left: 631px;
+  background-color: red;
+  position: absolute;
+  opacity: 0.2;
+}
+.area1{
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  background-color: red;
+  animation: scale-down 5s infinite; 
+  border-radius: 50%;
+  opacity: 1;
+  transform: scale(0.4);
+  /* transition: all 1s ease-in-out; */
+}
+
+
+
+@keyframes scale-down {
+  50% {
+    transform: scale(1);
+  }
+ 
+}
